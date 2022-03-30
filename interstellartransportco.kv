@@ -7,7 +7,8 @@
 #:set color_shakespeare hex('#62B2D7')
 #:set color_san_marino hex('#4774A2')
 
-<NewButton>:
+<NewButton@Button>:
+    font_size: 35
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     canvas.before:
@@ -16,23 +17,61 @@
         RoundedRectangle:
             pos: self.pos
             size: self.size
-            radius: [10, ]
+            radius: [40, ]
 
 <MarketButton>:
+    color: color_shakespeare
+    background_color: 0, 0, 0, 0
     on_press: print(f'{self.text} pressed')
+    canvas.before:
+        Color:
+            rgba: color_san_marino if self.state=='normal' else color_firefly
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10, ]
 
 <PlusButton>:
+    color: color_shakespeare
+    background_color: 0, 0, 0, 0
+    text: '+'
     size_hint_x: None
     width: 80
     on_press: print(f'{self.text} {self.parent.children[3].text}')
+    canvas.before:
+        Color:
+            rgba: color_san_marino if self.state=='normal' else color_firefly
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10, ]
 
 <MinusButton>:
+    color: color_shakespeare
+    background_color: 0, 0, 0, 0
+    text: '-'
     size_hint_x: None
     width: 80
     on_press: print(f'{self.text} {self.parent.children[3].text}')
+    canvas.before:
+        Color:
+            rgba: color_san_marino if self.state=='normal' else color_firefly
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10, ]
 
 <PlayerStatButton>:
+    color: color_shakespeare
+    background_color: 0, 0, 0, 0
     on_press: print(f'{self.text} pressed')
+    canvas.before:
+        Color:
+            rgba: color_san_marino if self.state=='normal' else color_firefly
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10, ]
 
 <PlayerStats>:
     id: player_stats
@@ -43,13 +82,19 @@
 
 
     BoxLayout:
+        canvas:
+            Color:
+                rgba: color_submarine
+            RoundedRectangle:
+                size: self.size
+                radius: [0, 0, 0, 25 ]
         orientation: 'horizontal'
         spacing: 20
         padding: 10
         PlayerStatButton:
             text: '>'
             size_hint_x: None
-            size: (self.parent.width / 14), self.height
+            size: 50, self.height
             on_press: self.expand_contract()
         BoxLayout:
             orientation: 'vertical'
@@ -90,7 +135,9 @@
 
 <MarketScreen>:
     on_pre_enter:
-        self.add_buttons(root.planets[0].market_goods)
+        self.add_buttons(['Grain','Water','Fuel','Material','Iron','Wool','Steel','Medicine','Stone'])
+
+
     canvas:
         Color:
             rgba: color_firefly

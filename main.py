@@ -180,7 +180,7 @@ class Planet():
         '''
 
 
-    def unemployment(self):
+    def unemployment_calculation(self):
         self.unemployment = self.population
 
         # Remove each goods producers from the unemployment stat.
@@ -210,7 +210,7 @@ class MarketScreen(Screen):
         self.ids.commodity_list.size = (current_size_x, children_count * 60)
 
         for each in commodities_list:
-            price = each['production']
+            self.price = each['production']
             temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
 
             temp_box_layout.add_widget(PlusButton(text=f'+100,{each}'))
@@ -279,6 +279,7 @@ class InterstellarTransportCoApp(App):
 
         return sm
 
+        return sm
 
 if __name__ == '__main__':
     InterstellarTransportCoApp().run()
