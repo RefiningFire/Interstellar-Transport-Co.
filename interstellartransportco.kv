@@ -7,8 +7,8 @@
 #:set color_shakespeare hex('#62B2D7')
 #:set color_san_marino hex('#4774A2')
 
-<NewButton@Button>:
-    font_size: 35
+<NewButton>:
+    font_size: 30
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     canvas.before:
@@ -23,6 +23,8 @@
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     on_press: print(f'{self.text} pressed')
+    size_hint_x: None
+    width: 240
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -37,7 +39,7 @@
     text: '+'
     size_hint_x: None
     width: 80
-    on_press: print(f'{self.text} {self.parent.children[3].text}')
+    on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -52,7 +54,7 @@
     text: '-'
     size_hint_x: None
     width: 80
-    on_press: print(f'{self.text} {self.parent.children[3].text}')
+    on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -135,7 +137,7 @@
 
 <MarketScreen>:
     on_pre_enter:
-        self.add_buttons(['Grain','Water','Fuel','Material','Iron','Wool','Steel','Medicine','Stone'])
+        self.add_buttons(self.planets[0].market_goods)
 
 
     canvas:

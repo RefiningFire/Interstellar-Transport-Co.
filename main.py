@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.button import Button
+from kivy.uix.label import Label
 from kivy.uix.dropdown import DropDown
 from kivy.uix.relativelayout import RelativeLayout
 
@@ -151,34 +152,6 @@ class Planet():
             self.market_goods[i]['consumption'] = self.__temp_consumption
 
         self.unemployment_calculation()
-        '''
-        self.market_goods = [
-        {
-        'name':self.goods_types[0],
-        'labor_value':2,
-        'production':self.producers[0],
-        'consumption':3,
-        'market':100,
-        'reserve':14
-        },
-        {
-        'name':self.goods_types[1],
-        'labor_value':1,
-        'production':self.producers[1],
-        'consumption':15,
-        'market':20,
-        'reserve':2
-        },
-        {
-        'name':self.goods_types[2],
-        'labor_value':4,
-        'production':self.producers[2],
-        'consumption':8,
-        'market':-45,
-        'reserve':50
-        }]
-        '''
-
 
     def unemployment_calculation(self):
         self.unemployment = self.population
@@ -210,14 +183,16 @@ class MarketScreen(Screen):
         self.ids.commodity_list.size = (current_size_x, children_count * 60)
 
         for each in commodities_list:
-            self.price = each['production']
+            price = each['market'] * each['labor_value']
+
             temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
 
-            temp_box_layout.add_widget(PlusButton(text=f'+100,{each}'))
-            temp_box_layout.add_widget(PlusButton(text='+10'))
-            temp_box_layout.add_widget(PlusButton(text='+1'))
+            temp_box_layout.add_widget(PlusButton(text=f'+100'))
+            temp_box_layout.add_widget(PlusButton(text=f'+10'))
+            temp_box_layout.add_widget(PlusButton(text=f'+1'))
 
             temp_box_layout.add_widget(MarketButton(text=each['name']))
+            temp_box_layout.add_widget(Label(text=f'{price}'))
 
             temp_box_layout.add_widget(MinusButton(text='-1'))
             temp_box_layout.add_widget(MinusButton(text='-10'))
@@ -237,6 +212,10 @@ class MyScreenManager(ScreenManager):
 class NewButton(Button):
     def __init__(self,**kwargs):
         super(Button,self).__init__(**kwargs)
+
+    def make_transaction(self, commodity, value):
+        print(commodity)
+        print(value)
 
 class MarketButton(NewButton):
     def getMessage(self, obj):
@@ -279,7 +258,6 @@ class InterstellarTransportCoApp(App):
 
         return sm
 
-        return sm
 
 if __name__ == '__main__':
     InterstellarTransportCoApp().run()
