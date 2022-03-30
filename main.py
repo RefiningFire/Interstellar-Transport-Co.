@@ -8,7 +8,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.button import Button
+<<<<<<< HEAD
 from kivy.uix.label import Label
+=======
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
 from kivy.uix.dropdown import DropDown
 from kivy.uix.relativelayout import RelativeLayout
 
@@ -16,6 +19,7 @@ from kivy.animation import Animation
 
 from kivy.core.window import Window
 
+<<<<<<< HEAD
 import random
 
 Window.maximize()
@@ -225,22 +229,84 @@ class PlusButton(NewButton):
     pass
 
 class MinusButton(NewButton):
+=======
+Window.maximize()
+
+
+
+class MarketScreen(Screen):
+        children_count = 0
+        def __init__(self,**kwargs):
+            super(MarketScreen,self).__init__(**kwargs)
+
+        def add_buttons(self, commodities_list):
+            children_count = len(commodities_list) * 60
+            current_size_x = self.ids.commodity_list.size[0]
+
+            # Update the list size to fill each market button.
+            self.ids.commodity_list.size = (current_size_x, children_count)
+
+            for each in commodities_list:
+                temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
+
+                temp_box_layout.add_widget(PlusButton(text='+100'))
+                temp_box_layout.add_widget(PlusButton(text='+10'))
+                temp_box_layout.add_widget(PlusButton(text='+1'))
+
+                temp_box_layout.add_widget(MarketButton(text=each))
+
+                temp_box_layout.add_widget(MinusButton(text='-1'))
+                temp_box_layout.add_widget(MinusButton(text='-10'))
+                temp_box_layout.add_widget(MinusButton(text='-100'))
+
+                self.ids.commodity_list.add_widget(temp_box_layout)
+
+class MenuScreen(Screen):
+    pass
+
+class SettingsScreen(Screen):
+    pass
+
+class MyScreenManager(ScreenManager):
+    pass
+
+class MarketButton(Button):
+    def getMessage(self, obj):
+        print('MarketButton Pressed! It was:', obj.text)
+
+class PlusButton(Button):
+    pass
+
+class MinusButton(Button):
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     pass
 
 class PlayerStats(RelativeLayout):
     pass
 
+<<<<<<< HEAD
 class PlayerStatButton(NewButton):
+=======
+class PlayerStatButton(Button):
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     def __init__(self,**kwargs):
         super(PlayerStatButton,self).__init__(**kwargs)
 
     def expand_contract(self):
+<<<<<<< HEAD
         if self.pos[0] < self.parent.width / 2: # Collapse
+=======
+        if self.pos[0] < self.parent.width / 2:
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
             anim_x = (self.parent.width -
                       self.width -
                       self.parent.spacing)
             new_text = '<'
+<<<<<<< HEAD
         elif self.pos[0] > self.parent.width / 2: # Expand
+=======
+        elif self.pos[0] > self.parent.width / 2:
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
             anim_x = 0
             new_text = '>'
         anim = Animation(x=anim_x,y=0, t='in_out_quart',d=0.5)
@@ -250,14 +316,21 @@ class PlayerStatButton(NewButton):
 
 class InterstellarTransportCoApp(App):
     def build(self):
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
         sm = ScreenManager(transition=SlideTransition())
         sm.add_widget(MarketScreen(name='market'))
         sm.add_widget(MenuScreen(name='menu'))
         sm.add_widget(SettingsScreen(name='settings'))
+<<<<<<< HEAD
 
         return sm
+=======
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
 
+        return sm
 
 if __name__ == '__main__':
     InterstellarTransportCoApp().run()

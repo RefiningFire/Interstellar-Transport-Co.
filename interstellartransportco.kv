@@ -7,8 +7,13 @@
 #:set color_shakespeare hex('#62B2D7')
 #:set color_san_marino hex('#4774A2')
 
+<<<<<<< HEAD
 <NewButton>:
     font_size: 30
+=======
+<NewButton@Button>:
+    font_size: 35
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     canvas.before:
@@ -23,8 +28,11 @@
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     on_press: print(f'{self.text} pressed')
+<<<<<<< HEAD
     size_hint_x: None
     width: 240
+=======
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -39,7 +47,11 @@
     text: '+'
     size_hint_x: None
     width: 80
+<<<<<<< HEAD
     on_press: self.make_transaction(self.parent.children[3].text, self.text)
+=======
+    on_press: print(f'{self.text} {self.parent.children[3].text}')
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -54,7 +66,11 @@
     text: '-'
     size_hint_x: None
     width: 80
+<<<<<<< HEAD
     on_press: self.make_transaction(self.parent.children[3].text, self.text)
+=======
+    on_press: print(f'{self.text} {self.parent.children[3].text}')
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -137,7 +153,11 @@
 
 <MarketScreen>:
     on_pre_enter:
+<<<<<<< HEAD
         self.add_buttons(self.planets[0].market_goods)
+=======
+        self.add_buttons(['Grain','Water','Fuel','Material','Iron','Wool','Steel','Medicine','Stone'])
+>>>>>>> 0ef1e76e6eaa513760c6a2afd8504f04c48dc638
 
 
     canvas:
