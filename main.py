@@ -17,6 +17,7 @@ from kivy.animation import Animation
 from kivy.core.window import Window
 
 import random
+import re
 
 Window.maximize()
 
@@ -60,6 +61,19 @@ planet_possible_goods = [
                                 },
                             ]
                         ]
+
+player_commodity_list = [
+    {'name':'grain','count':0},
+    {'name':'water','count':0},
+    {'name':'bread','count':0},
+    {'name':'ore','count':0},
+    {'name':'energy','count':0},
+    {'name':'fuel','count':0},
+    {'name':'drone','count':0},
+    {'name':'droid','count':0},
+    {'name':'synthetic','count':0}
+]
+
 
 
 class Planet():
@@ -180,23 +194,34 @@ class MarketScreen(Screen):
         current_size_x = self.ids.commodity_list.size[0]
 
         # Update the list size to fill each market button.
-        self.ids.commodity_list.size = (current_size_x, children_count * 60)
+        self.ids.commodity_list.size = (current_size_x, (children_count + 1) * 60)
+
+        temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
+        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 100'))
+        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 10'))
+        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 1'))
+        temp_box_layout.add_widget(Label(text='Commodity',color=('4774A2'),font_size=30))
+        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 1'))
+        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 10'))
+        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 100'))
+
+
+        self.ids.commodity_list.add_widget(temp_box_layout)
 
         for each in commodities_list:
             price = each['market'] * each['labor_value']
 
             temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
 
-            temp_box_layout.add_widget(PlusButton(text=f'+100'))
-            temp_box_layout.add_widget(PlusButton(text=f'+10'))
-            temp_box_layout.add_widget(PlusButton(text=f'+1'))
+            temp_box_layout.add_widget(PlusButton(text=f'$-{price*100}'))
+            temp_box_layout.add_widget(PlusButton(text=f'$-{price*10}'))
+            temp_box_layout.add_widget(PlusButton(text=f'$-{price}'))
 
             temp_box_layout.add_widget(MarketButton(text=each['name']))
-            temp_box_layout.add_widget(Label(text=f'{price}'))
 
-            temp_box_layout.add_widget(MinusButton(text='-1'))
-            temp_box_layout.add_widget(MinusButton(text='-10'))
-            temp_box_layout.add_widget(MinusButton(text='-100'))
+            temp_box_layout.add_widget(MinusButton(text=f'${price}'))
+            temp_box_layout.add_widget(MinusButton(text=f'${price*10}'))
+            temp_box_layout.add_widget(MinusButton(text=f'${price*100}'))
 
             self.ids.commodity_list.add_widget(temp_box_layout)
 
@@ -214,8 +239,15 @@ class NewButton(Button):
         super(Button,self).__init__(**kwargs)
 
     def make_transaction(self, commodity, value):
-        print(commodity)
-        print(value)
+        # Remove the '$' from the text string and convert it to an integer.
+        self.temp_commodity_value = int(re.sub('[$]','',str(value)))
+
+        # Iterate through player commodities to find the match.
+        for i in range(len(player_commodity_list)):
+            if player_commodity_list[i]['name'] == commodity.lower():
+                # Update player count by the amount bought.
+                player_commodity_list[i]['count'] += self.temp_commodity_value
+                break
 
 class MarketButton(NewButton):
     def getMessage(self, obj):
@@ -227,8 +259,12 @@ class PlusButton(NewButton):
 class MinusButton(NewButton):
     pass
 
+class PlusMinusLabel(Label):
+    pass
+
 class PlayerStats(RelativeLayout):
     pass
+
 
 class PlayerStatButton(NewButton):
     def __init__(self,**kwargs):

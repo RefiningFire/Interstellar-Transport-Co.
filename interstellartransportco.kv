@@ -23,8 +23,6 @@
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     on_press: print(f'{self.text} pressed')
-    size_hint_x: None
-    width: 240
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -38,7 +36,7 @@
     background_color: 0, 0, 0, 0
     text: '+'
     size_hint_x: None
-    width: 80
+    width: 140
     on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
@@ -53,7 +51,7 @@
     background_color: 0, 0, 0, 0
     text: '-'
     size_hint_x: None
-    width: 80
+    width: 140
     on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
@@ -62,6 +60,15 @@
             pos: self.pos
             size: self.size
             radius: [10, ]
+
+<PlusMinusLabel>:
+    color: color_san_marino
+    background_color: 0, 0, 0, 0
+    font_size: 30
+    text: ''
+    size_hint_x: None
+    width: 140
+
 
 <PlayerStatButton>:
     color: color_shakespeare
@@ -105,7 +112,7 @@
                 color: color_shakespeare
             PlayerStatButton:
                 id: player_credits
-                text: '100'
+                text: '$100,000'
         BoxLayout:
             orientation: 'vertical'
             Label:
