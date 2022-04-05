@@ -62,20 +62,6 @@ planet_possible_goods = [
                             ]
                         ]
 
-player_commodity_list = [
-    {'name':'grain','count':0},
-    {'name':'water','count':0},
-    {'name':'bread','count':0},
-    {'name':'ore','count':0},
-    {'name':'energy','count':0},
-    {'name':'fuel','count':0},
-    {'name':'drone','count':0},
-    {'name':'droid','count':0},
-    {'name':'synthetic','count':0}
-]
-
-
-
 class Planet():
     def __init__(self,planet_possible_goods):
         self.__currently_populating = True
@@ -242,12 +228,16 @@ class NewButton(Button):
         # Remove the '$' from the text string and convert it to an integer.
         self.temp_commodity_value = int(re.sub('[$]','',str(value)))
 
-        # Iterate through player commodities to find the match.
-        for i in range(len(player_commodity_list)):
-            if player_commodity_list[i]['name'] == commodity.lower():
-                # Update player count by the amount bought.
-                player_commodity_list[i]['count'] += self.temp_commodity_value
-                break
+        # Update player credits stat.
+        app.player_stats['credits'] += self.temp_commodity_value
+
+        # Change the player credits button to match the stat.
+        app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
+
+
+        # Update player commodities by amount purchased/sold
+        app.player_commodities[commodity.lower()] += self.temp_commodity_value
+
 
 class MarketButton(NewButton):
     def getMessage(self, obj):
@@ -261,10 +251,6 @@ class MinusButton(NewButton):
 
 class PlusMinusLabel(Label):
     pass
-
-class PlayerStats(RelativeLayout):
-    pass
-
 
 class PlayerStatButton(NewButton):
     def __init__(self,**kwargs):
@@ -283,21 +269,41 @@ class PlayerStatButton(NewButton):
         anim.start(self.parent)
         self.text = new_text
 
+    def update(self,new_value):
+        self.text = new_value
+
 
 class InterstellarTransportCoApp(App):
     def build(self):
 
-        sm = ScreenManager(transition=SlideTransition())
-        sm.add_widget(MarketScreen(name='market'))
-        sm.add_widget(MenuScreen(name='menu'))
-        sm.add_widget(SettingsScreen(name='settings'))
+        self.player_stats = {
+            'credits':100000,
+            'cargo_capacity':100,
+            'cargo_used':0
+        }
 
-        return sm
+        self.player_commodities = {
+            'grain':0,
+            'water':0,
+            'bread':0,
+            'ore':0,
+            'energy':0,
+            'fuel':0,
+            'drone':0,
+            'droid':0,
+            'synthetic':0
+        }
 
-        return sm
+        self.sm = ScreenManager(transition=SlideTransition())
+        self.sm.add_widget(MarketScreen(name='market'))
+        self.sm.add_widget(MenuScreen(name='menu'))
+        self.sm.add_widget(SettingsScreen(name='settings'))
+
+        return self.sm
 
 if __name__ == '__main__':
-    InterstellarTransportCoApp().run()
+    app = InterstellarTransportCoApp()
+    app.run()
 
 
 '''

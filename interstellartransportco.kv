@@ -82,63 +82,6 @@
             size: self.size
             radius: [10, ]
 
-<PlayerStats>:
-    id: player_stats
-    orientation: 'vertical'
-    size_hint: None, None
-    size: 1000, 100
-    pos_hint: {'top':1,'right':1}
-
-
-    BoxLayout:
-        canvas:
-            Color:
-                rgba: color_submarine
-            RoundedRectangle:
-                size: self.size
-                radius: [0, 0, 0, 25 ]
-        orientation: 'horizontal'
-        spacing: 20
-        padding: 10
-        PlayerStatButton:
-            text: '>'
-            size_hint_x: None
-            size: 50, self.height
-            on_press: self.expand_contract()
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                text: 'Credits'
-                color: color_shakespeare
-            PlayerStatButton:
-                id: player_credits
-                text: '$100,000'
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                text: 'stat2'
-                color: color_shakespeare
-            PlayerStatButton:
-                id: player_stats2
-                text: 'stat 2'
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                text: 'stat3'
-                color: color_shakespeare
-            PlayerStatButton:
-                id: player_stats3
-                text: 'stat 3'
-        BoxLayout:
-            orientation: 'vertical'
-            Label:
-                text: 'stat4'
-                color: color_shakespeare
-            PlayerStatButton:
-                id: player_stats4
-                text: 'stat 4'
-
-
 <MyScreenManager>:
     MarketScreen:
 
@@ -172,7 +115,59 @@
                 size: self.parent.width - 40, root.children_count
                 pos: (self.parent.width / 2) - (self.width / 2), 300
                 spacing: 20
-        PlayerStats:
+        RelativeLayout:
+            id: player_stats
+            orientation: 'vertical'
+            size_hint: None, None
+            size: 1000, 100
+            pos_hint: {'top':1,'right':1}
+            BoxLayout:
+                canvas:
+                    Color:
+                        rgba: color_submarine
+                    RoundedRectangle:
+                        size: self.size
+                        radius: [0, 0, 0, 25 ]
+                orientation: 'horizontal'
+                spacing: 20
+                padding: 10
+                PlayerStatButton:
+                    text: '>'
+                    size_hint_x: None
+                    size: 50, self.height
+                    on_press: self.expand_contract()
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'Credits'
+                        color: color_shakespeare
+                    PlayerStatButton:
+                        id: player_credits
+                        text: str(app.player_stats['credits'])
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'Cargo'
+                        color: color_shakespeare
+                    PlayerStatButton:
+                        id: player_stats2
+                        text: '0'
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'stat3'
+                        color: color_shakespeare
+                    PlayerStatButton:
+                        id: player_stats3
+                        text: 'stat 3'
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'stat4'
+                        color: color_shakespeare
+                    PlayerStatButton:
+                        id: player_stats4
+                        text: 'stat 4'
 
 
 <MenuScreen>:
