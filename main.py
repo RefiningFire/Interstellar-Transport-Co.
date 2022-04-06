@@ -231,13 +231,60 @@ class NewButton(Button):
         # Update player credits stat.
         app.player_stats['credits'] += self.temp_commodity_value
 
-        # Change the player credits button to match the stat.
-        app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
-
-
         # Update player commodities by amount purchased/sold
         app.player_commodities[commodity.lower()] += self.temp_commodity_value
 
+        # Update the player credits button to match the stat.
+        app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
+
+
+
+        # Create copy of the current planet's commodities.
+        self.__commodities_list = app.sm.children[0].planets[0].market_goods
+
+        #self.__market_list = app.sm.children[0].ids.commodity_list.children
+
+        self.__counter = 0
+
+        for each in self.__commodities_list:
+            self.__commodity_price = each['market'] * each['labor_value']
+
+            #for child in app.sm.children[0].ids.commodity_list.children:
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text)
+            print()
+            print()
+            print()
+
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text = f'$-{self.__commodity_price*100}'
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text = f'$-{self.__commodity_price*10}'
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text = f'$-{self.__commodity_price}'
+            #app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text = f'${self.__commodity_price}'
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text = f'${self.__commodity_price*10}'
+            app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text = f'${self.__commodity_price*100}'
+            print()
+            print()
+            print()
+
+
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text)
+            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text)
+            print()
+
+            self.__counter += 1
+
+            print()
 
 class MarketButton(NewButton):
     def getMessage(self, obj):

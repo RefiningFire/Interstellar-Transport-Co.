@@ -88,8 +88,6 @@
 <MarketScreen>:
     on_pre_enter:
         self.add_buttons(self.planets[0].market_goods)
-
-
     canvas:
         Color:
             rgba: color_firefly
@@ -151,7 +149,7 @@
                         color: color_shakespeare
                     PlayerStatButton:
                         id: player_stats2
-                        text: '0'
+                        text: str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
                 BoxLayout:
                     orientation: 'vertical'
                     Label:
