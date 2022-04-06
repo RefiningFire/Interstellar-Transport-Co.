@@ -31,13 +31,11 @@
             size: self.size
             radius: [10, ]
 
-<PlusButton>:
+<BuyButton>:
     color: color_shakespeare
     background_color: 0, 0, 0, 0
-    text: '+'
     size_hint_x: None
     width: 140
-    on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -46,13 +44,21 @@
             size: self.size
             radius: [10, ]
 
-<MinusButton>:
+<Buy100>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 100)
+
+<BuyTen>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 10)
+
+<BuyOne>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 1)
+
+<SellButton>:
     color: color_shakespeare
     background_color: 0, 0, 0, 0
     text: '-'
     size_hint_x: None
     width: 140
-    on_press: self.make_transaction(self.parent.children[3].text, self.text)
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -61,7 +67,16 @@
             size: self.size
             radius: [10, ]
 
-<PlusMinusLabel>:
+<Sell100>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 100)
+
+<SellTen>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 10)
+
+<SellOne>:
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, 1)
+
+<BuySellLabel>:
     color: color_san_marino
     background_color: 0, 0, 0, 0
     font_size: 30

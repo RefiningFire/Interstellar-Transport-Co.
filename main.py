@@ -183,13 +183,13 @@ class MarketScreen(Screen):
         self.ids.commodity_list.size = (current_size_x, (children_count + 1) * 60)
 
         temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
-        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 100'))
-        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 10'))
-        temp_box_layout.add_widget(PlusMinusLabel(text='Buy 1'))
+        temp_box_layout.add_widget(BuySellLabel(text='Buy 100'))
+        temp_box_layout.add_widget(BuySellLabel(text='Buy 10'))
+        temp_box_layout.add_widget(BuySellLabel(text='Buy 1'))
         temp_box_layout.add_widget(Label(text='Commodity',color=('4774A2'),font_size=30))
-        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 1'))
-        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 10'))
-        temp_box_layout.add_widget(PlusMinusLabel(text='Sell 100'))
+        temp_box_layout.add_widget(BuySellLabel(text='Sell 1'))
+        temp_box_layout.add_widget(BuySellLabel(text='Sell 10'))
+        temp_box_layout.add_widget(BuySellLabel(text='Sell 100'))
 
 
         self.ids.commodity_list.add_widget(temp_box_layout)
@@ -199,15 +199,15 @@ class MarketScreen(Screen):
 
             temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
 
-            temp_box_layout.add_widget(PlusButton(text=f'$-{price*100}'))
-            temp_box_layout.add_widget(PlusButton(text=f'$-{price*10}'))
-            temp_box_layout.add_widget(PlusButton(text=f'$-{price}'))
+            temp_box_layout.add_widget(Buy100(text=f'$-{price*100}'))
+            temp_box_layout.add_widget(BuyTen(text=f'$-{price*10}'))
+            temp_box_layout.add_widget(BuyOne(text=f'$-{price}'))
 
             temp_box_layout.add_widget(MarketButton(text=each['name']))
 
-            temp_box_layout.add_widget(MinusButton(text=f'${price}'))
-            temp_box_layout.add_widget(MinusButton(text=f'${price*10}'))
-            temp_box_layout.add_widget(MinusButton(text=f'${price*100}'))
+            temp_box_layout.add_widget(SellOne(text=f'${price}'))
+            temp_box_layout.add_widget(SellTen(text=f'${price*10}'))
+            temp_box_layout.add_widget(Sell100(text=f'${price*100}'))
 
             self.ids.commodity_list.add_widget(temp_box_layout)
 
@@ -224,7 +224,7 @@ class NewButton(Button):
     def __init__(self,**kwargs):
         super(Button,self).__init__(**kwargs)
 
-    def make_transaction(self, commodity, value):
+    def make_transaction(self, commodity, value, amount):
         # Remove the '$' from the text string and convert it to an integer.
         self.temp_commodity_value = int(re.sub('[$]','',str(value)))
 
@@ -232,71 +232,45 @@ class NewButton(Button):
         app.player_stats['credits'] += self.temp_commodity_value
 
         # Update player commodities by amount purchased/sold
-        app.player_commodities[commodity.lower()] += self.temp_commodity_value
+        app.player_commodities[commodity.lower()] += amount
 
         # Update the player credits button to match the stat.
         app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
 
 
-
         # Create copy of the current planet's commodities.
         self.__commodities_list = app.sm.children[0].planets[0].market_goods
 
-        #self.__market_list = app.sm.children[0].ids.commodity_list.children
-
-        self.__counter = 0
-
-        for each in self.__commodities_list:
-            self.__commodity_price = each['market'] * each['labor_value']
-
-            #for child in app.sm.children[0].ids.commodity_list.children:
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text)
-            print()
-            print()
-            print()
-
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text = f'$-{self.__commodity_price*100}'
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text = f'$-{self.__commodity_price*10}'
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text = f'$-{self.__commodity_price}'
-            #app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text = f'${self.__commodity_price}'
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text = f'${self.__commodity_price*10}'
-            app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text = f'${self.__commodity_price*100}'
-            print()
-            print()
-            print()
-
-
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[0].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[1].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[2].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[3].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[4].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[5].text)
-            print(app.sm.children[0].ids.commodity_list.children[self.__counter].children[6].text)
-            print()
-
-            self.__counter += 1
-
-            print()
 
 class MarketButton(NewButton):
     def getMessage(self, obj):
         print('MarketButton Pressed! It was:', obj.text)
 
-class PlusButton(NewButton):
+class BuyButton(NewButton):
     pass
 
-class MinusButton(NewButton):
+class Buy100(BuyButton):
     pass
 
-class PlusMinusLabel(Label):
+class BuyTen(BuyButton):
+    pass
+
+class BuyOne(BuyButton):
+    pass
+
+class SellButton(NewButton):
+    pass
+
+class Sell100(SellButton):
+    pass
+
+class SellTen(SellButton):
+    pass
+
+class SellOne(SellButton):
+    pass
+
+class BuySellLabel(Label):
     pass
 
 class PlayerStatButton(NewButton):
