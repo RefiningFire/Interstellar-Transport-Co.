@@ -68,13 +68,13 @@
             radius: [10, ]
 
 <Sell100>:
-    on_press: self.make_transaction(self.parent.children[3].text, self.text, 100)
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, -100)
 
 <SellTen>:
-    on_press: self.make_transaction(self.parent.children[3].text, self.text, 10)
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, -10)
 
 <SellOne>:
-    on_press: self.make_transaction(self.parent.children[3].text, self.text, 1)
+    on_press: self.make_transaction(self.parent.children[3].text, self.text, -1)
 
 <BuySellLabel>:
     color: color_san_marino
@@ -163,7 +163,7 @@
                         text: 'Cargo'
                         color: color_shakespeare
                     PlayerStatButton:
-                        id: player_stats2
+                        id: player_cargo
                         text: str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
                 BoxLayout:
                     orientation: 'vertical'

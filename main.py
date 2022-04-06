@@ -237,6 +237,11 @@ class NewButton(Button):
         # Update the player credits button to match the stat.
         app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
 
+        # Update all the player stats..
+        app.update_stats()
+
+        # Update the player_cargo stats.
+        app.sm.children[0].ids.player_cargo.text = str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
 
         # Create copy of the current planet's commodities.
         self.__commodities_list = app.sm.children[0].planets[0].market_goods
@@ -299,7 +304,7 @@ class InterstellarTransportCoApp(App):
 
         self.player_stats = {
             'credits':100000,
-            'cargo_capacity':100,
+            'cargo_capacity':1000,
             'cargo_used':0
         }
 
@@ -321,6 +326,11 @@ class InterstellarTransportCoApp(App):
         self.sm.add_widget(SettingsScreen(name='settings'))
 
         return self.sm
+
+    def update_stats(self):
+        self.player_stats['cargo_used'] = 0
+        for each in self.player_commodities:
+            self.player_stats['cargo_used'] += self.player_commodities[each]
 
 if __name__ == '__main__':
     app = InterstellarTransportCoApp()
