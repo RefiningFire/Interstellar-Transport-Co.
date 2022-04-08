@@ -88,7 +88,6 @@
 <PlayerStatButton>:
     color: color_shakespeare
     background_color: 0, 0, 0, 0
-    on_press: print(f'{self.text} pressed')
     canvas.before:
         Color:
             rgba: color_san_marino if self.state=='normal' else color_firefly
@@ -132,7 +131,7 @@
             id: player_stats
             orientation: 'vertical'
             size_hint: None, None
-            size: 1000, 100
+            size: 750, 100
             pos_hint: {'top':1,'right':1}
             BoxLayout:
                 canvas:
@@ -148,7 +147,7 @@
                     text: '>'
                     size_hint_x: None
                     size: 50, self.height
-                    on_press: self.expand_contract()
+                    on_press: self.expand_contract_bar()
                 BoxLayout:
                     orientation: 'vertical'
                     Label:
@@ -157,14 +156,6 @@
                     PlayerStatButton:
                         id: player_credits
                         text: str(app.player_stats['credits'])
-                BoxLayout:
-                    orientation: 'vertical'
-                    Label:
-                        text: 'Cargo'
-                        color: color_shakespeare
-                    PlayerStatButton:
-                        id: player_cargo
-                        text: str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
                 BoxLayout:
                     orientation: 'vertical'
                     Label:
@@ -181,6 +172,35 @@
                     PlayerStatButton:
                         id: player_stats4
                         text: 'stat 4'
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            pos_hint: {'top':1,'left':1}
+            spacing: 20
+            padding: 10
+            canvas:
+                Color:
+                    rgba: color_san_marino
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [0, 0, 25, 0]
+            Label:
+                text: 'Cargo'
+                font_size: 50
+                color: color_shakespeare
+            Label:
+                text: 'Type: Used/Capacity'
+                color: color_shakespeare
+            Label:
+                id: player_cargo
+                color: color_shakespeare
+                text: 'total: ' + str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
+                Label:
+                    text:'test'
+
+
+
 
 
 <MenuScreen>:

@@ -21,7 +21,6 @@ import re
 
 Window.maximize()
 
-
 # This is a list of the goods that each planet type can support, in descending order of commonality at start.
 planet_possible_goods = [
                             [# Name, labor_value
@@ -211,6 +210,9 @@ class MarketScreen(Screen):
 
             self.ids.commodity_list.add_widget(temp_box_layout)
 
+        # Create the player cargo panel.
+        NewButton().player_cargo_panel_resize()
+
 class MenuScreen(Screen):
     pass
 
@@ -224,6 +226,42 @@ class NewButton(Button):
     def __init__(self,**kwargs):
         super(Button,self).__init__(**kwargs)
 
+    def player_cargo_panel_resize(self):
+
+        self.__commodity_types_count = 0
+
+
+
+        for i in range(len(app.sm.children[0].ids.player_cargo.parent.children)):
+            print(app.sm.children[0].ids.player_cargo.parent.children[i].text)
+
+
+
+
+
+
+        for key in app.player_commodities:
+            if app.player_commodities[key]['count'] > 0:
+                self.__commodity_types_count += 1
+
+                app.sm.children[0].ids.player_cargo.parent.add_widget(Label(text=key + ': ' + str(app.player_commodities[key]['count'])))
+
+            '''
+                if not app.player_commodities[key]['in_cargo_panel']:
+                    app.sm.children[0].ids.player_cargo.parent.add_widget(Label(text=key + ': ' + str(app.player_commodities[key]['count'])))
+
+                    app.player_commodities[key]['in_cargo_panel'] = True
+
+            elif app.player_commodities[key]['count'] <= 0:
+                app.sm.children[0].ids.player_cargo.parent.remove_widget()
+
+                app.player_commodities[key]['in_cargo_panel'] = False
+            '''
+
+
+        anim = Animation(size=(400, (self.__commodity_types_count + 2) * 100),t='in_out_back',d=0.5)
+        anim.start(app.sm.children[0].ids.player_cargo.parent)
+
     def make_transaction(self, commodity, value, amount):
         # Remove the '$' from the text string and convert it to an integer.
         self.temp_commodity_value = int(re.sub('[$]','',str(value)))
@@ -232,7 +270,7 @@ class NewButton(Button):
         app.player_stats['credits'] += self.temp_commodity_value
 
         # Update player commodities by amount purchased/sold
-        app.player_commodities[commodity.lower()] += amount
+        app.player_commodities[commodity.lower()]['count'] += amount
 
         # Update the player credits button to match the stat.
         app.sm.children[0].ids.player_credits.text = str(app.player_stats['credits'])
@@ -241,10 +279,13 @@ class NewButton(Button):
         app.update_stats()
 
         # Update the player_cargo stats.
-        app.sm.children[0].ids.player_cargo.text = str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
+        app.sm.children[0].ids.player_cargo.text = 'total: ' + str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
 
         # Create copy of the current planet's commodities.
         self.__commodities_list = app.sm.children[0].planets[0].market_goods
+
+        # Update Cargo panel width.
+        self.player_cargo_panel_resize()
 
 
 class MarketButton(NewButton):
@@ -282,7 +323,7 @@ class PlayerStatButton(NewButton):
     def __init__(self,**kwargs):
         super(PlayerStatButton,self).__init__(**kwargs)
 
-    def expand_contract(self):
+    def expand_contract_bar(self):
         if self.pos[0] < self.parent.width / 2: # Collapse
             anim_x = (self.parent.width -
                       self.width -
@@ -292,7 +333,7 @@ class PlayerStatButton(NewButton):
             anim_x = 0
             new_text = '>'
         anim = Animation(x=anim_x,y=0, t='in_out_quart',d=0.5)
-        anim.start(self.parent)
+        anim.start(app.sm.children[0].ids.player_stats)
         self.text = new_text
 
     def update(self,new_value):
@@ -309,15 +350,15 @@ class InterstellarTransportCoApp(App):
         }
 
         self.player_commodities = {
-            'grain':0,
-            'water':0,
-            'bread':0,
-            'ore':0,
-            'energy':0,
-            'fuel':0,
-            'drone':0,
-            'droid':0,
-            'synthetic':0
+            'grain':{'count':0,'in_cargo_panel':False},
+            'water':{'count':0,'in_cargo_panel':False},
+            'bread':{'count':0,'in_cargo_panel':False},
+            'ore':{'count':0,'in_cargo_panel':False},
+            'energy':{'count':0,'in_cargo_panel':False},
+            'fuel':{'count':0,'in_cargo_panel':False},
+            'drone':{'count':0,'in_cargo_panel':False},
+            'droid':{'count':0,'in_cargo_panel':False},
+            'synthetic':{'count':0,'in_cargo_panel':False},
         }
 
         self.sm = ScreenManager(transition=SlideTransition())
@@ -330,7 +371,7 @@ class InterstellarTransportCoApp(App):
     def update_stats(self):
         self.player_stats['cargo_used'] = 0
         for each in self.player_commodities:
-            self.player_stats['cargo_used'] += self.player_commodities[each]
+            self.player_stats['cargo_used'] += self.player_commodities[each]['count']
 
 if __name__ == '__main__':
     app = InterstellarTransportCoApp()
