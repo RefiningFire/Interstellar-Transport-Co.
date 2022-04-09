@@ -211,7 +211,7 @@ class MarketScreen(Screen):
             self.ids.commodity_list.add_widget(temp_box_layout)
 
         # Create the player cargo panel.
-        NewButton().player_cargo_panel_resize()
+        NewButton().player_cargo_panel_resize('grain')
 
 class MenuScreen(Screen):
     pass
@@ -226,60 +226,29 @@ class NewButton(Button):
     def __init__(self,**kwargs):
         super(Button,self).__init__(**kwargs)
 
-    def player_cargo_panel_resize(self):
+    def player_cargo_panel_resize(self,commodity):
 
-        self.__commodity_types_count = 0
+        self.__current_commodity = 0
 
+        self.__temp_player_cargo = [i.text.split(':')[0].lower() for i in app.sm.children[0].ids.player_cargo.parent.children]
 
+        if app.player_commodities[commodity.lower()]['count'] > 0:
+            try:
+                self.__x = self.__temp_player_cargo.index(commodity.lower())
 
+                app.sm.children[0].ids.player_cargo.parent.children[self.__x].text = commodity + ': ' + str(app.player_commodities[commodity.lower()]['count'])
+            except:
+                app.sm.children[0].ids.player_cargo.parent.add_widget(Label(text= commodity + ': ' + str(app.player_commodities[commodity.lower()]['count'])))
+        else:
+            try:
+                self.__x = self.__temp_player_cargo.index(commodity.lower())
 
-        self.__temp_var = len(app.sm.children[0].ids.player_cargo.parent.children)
+                app.sm.children[0].ids.player_cargo.parent.remove_widget(app.sm.children[0].ids.player_cargo.parent.children[self.__x])
 
+            except:
+                print('player_cargo_panel_resize exception')
 
-
-
-
-
-
-
-
-
-        self.__temp_var = range(3,len(app.sm.children[0].ids.player_cargo.parent.children))
-
-
-        for i in self.__temp_var:
-
-            self.__cargo_to_remove.append(i-3)
-
-
-        for i in self.__cargo_to_remove:
-
-
-            app.sm.children[0].ids.player_cargo.parent.remove_widget(app.sm.children[0].ids.player_cargo.parent.children[i])
-
-
-
-
-        for key in app.player_commodities:
-            if app.player_commodities[key]['count'] > 0:
-                self.__commodity_types_count += 1
-
-                app.sm.children[0].ids.player_cargo.parent.add_widget(Label(text=key + ': ' + str(app.player_commodities[key]['count'])))
-
-            '''
-                if not app.player_commodities[key]['in_cargo_panel']:
-                    app.sm.children[0].ids.player_cargo.parent.add_widget(Label(text=key + ': ' + str(app.player_commodities[key]['count'])))
-
-                    app.player_commodities[key]['in_cargo_panel'] = True
-
-            elif app.player_commodities[key]['count'] <= 0:
-                app.sm.children[0].ids.player_cargo.parent.remove_widget()
-
-                app.player_commodities[key]['in_cargo_panel'] = False
-            '''
-
-
-        anim = Animation(size=(400, (self.__commodity_types_count + 2) * 100),t='in_out_back',d=0.5)
+        anim = Animation(size=(400, (len(app.sm.children[0].ids.player_cargo.parent.children)) * 50),t='out_back',d=0.5)
         anim.start(app.sm.children[0].ids.player_cargo.parent)
 
 
@@ -306,7 +275,7 @@ class NewButton(Button):
         self.__commodities_list = app.sm.children[0].planets[0].market_goods
 
         # Update Cargo panel width.
-        self.player_cargo_panel_resize()
+        self.player_cargo_panel_resize(commodity)
 
 
 class MarketButton(NewButton):
