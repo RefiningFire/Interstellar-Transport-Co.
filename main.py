@@ -244,7 +244,6 @@ class NewButton(Button):
                 self.__x = self.__temp_player_cargo.index(commodity.lower())
 
                 app.sm.children[0].ids.player_cargo.parent.remove_widget(app.sm.children[0].ids.player_cargo.parent.children[self.__x])
-
             except:
                 print('player_cargo_panel_resize exception')
 
@@ -255,6 +254,18 @@ class NewButton(Button):
     def make_transaction(self, commodity, value, amount):
         # Remove the '$' from the text string and convert it to an integer.
         self.temp_commodity_value = int(re.sub('[$]','',str(value)))
+
+        # Not enough Credits.
+        if (app.player_stats['credits'] + self.temp_commodity_value) < 0:
+            return
+
+        # Not enough Capacity.
+        elif (app.player_stats['cargo_capacity'] - app.player_stats['cargo_used']) < amount:
+            return
+
+        # Not enough of commodity in player_commodites.
+        elif (app.player_commodities[commodity.lower()]['count'] + amount) < 0:
+            return
 
         # Update player credits stat.
         app.player_stats['credits'] += self.temp_commodity_value
