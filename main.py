@@ -232,10 +232,30 @@ class NewButton(Button):
 
 
 
-        for i in range(len(app.sm.children[0].ids.player_cargo.parent.children)):
-            print(app.sm.children[0].ids.player_cargo.parent.children[i].text)
+
+        self.__temp_var = len(app.sm.children[0].ids.player_cargo.parent.children)
 
 
+
+
+
+
+
+
+
+
+        self.__temp_var = range(3,len(app.sm.children[0].ids.player_cargo.parent.children))
+
+
+        for i in self.__temp_var:
+
+            self.__cargo_to_remove.append(i-3)
+
+
+        for i in self.__cargo_to_remove:
+
+
+            app.sm.children[0].ids.player_cargo.parent.remove_widget(app.sm.children[0].ids.player_cargo.parent.children[i])
 
 
 
@@ -261,6 +281,7 @@ class NewButton(Button):
 
         anim = Animation(size=(400, (self.__commodity_types_count + 2) * 100),t='in_out_back',d=0.5)
         anim.start(app.sm.children[0].ids.player_cargo.parent)
+
 
     def make_transaction(self, commodity, value, amount):
         # Remove the '$' from the text string and convert it to an integer.
