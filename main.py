@@ -18,6 +18,7 @@ from kivy.core.window import Window
 
 import random
 import re
+import datetime
 
 Window.maximize()
 
@@ -166,13 +167,13 @@ class MarketScreen(Screen):
         super(MarketScreen,self).__init__(**kwargs)
 
         # Create the list of planets.
-        self.planets = []
+        app.planets = []
 
         # Populate the list of planets.
         for i in range(80000):
             self.__temp_len = len(planet_possible_goods) - 1
             self.__selec = random.randint(0,self.__temp_len)
-            self.planets.append(Planet(planet_possible_goods[self.__selec]))
+            app.planets.append(Planet(planet_possible_goods[self.__selec]))
 
     def add_buttons(self, commodities_list):
         children_count = len(commodities_list)
@@ -283,10 +284,16 @@ class NewButton(Button):
         app.sm.children[0].ids.player_cargo.text = 'total: ' + str(app.player_stats['cargo_used']) + '/' + str(app.player_stats['cargo_capacity'])
 
         # Create copy of the current planet's commodities.
-        self.__commodities_list = app.sm.children[0].planets[0].market_goods
+        self.__commodities_list = app.planets[0].market_goods
 
         # Update Cargo panel width.
         self.player_cargo_panel_resize(commodity)
+
+        # Calculate how long the transaction took.
+        self.__transaction_time = 0
+
+        # Update the clock by the time taken to make the transaction.
+        app.advance_time(abs(self.__transaction_time))
 
 
 class MarketButton(NewButton):
@@ -344,11 +351,13 @@ class PlayerStatButton(NewButton):
 
 class InterstellarTransportCoApp(App):
     def build(self):
+        app.planets = []
 
         self.player_stats = {
             'credits':100000,
             'cargo_capacity':1000,
-            'cargo_used':0
+            'cargo_used':0,
+
         }
 
         self.player_commodities = {
@@ -363,6 +372,10 @@ class InterstellarTransportCoApp(App):
             'synthetic':{'count':0,'in_cargo_panel':False},
         }
 
+        # The game_clock represents Earth Standard Time
+        self.game_clock = datetime.datetime(2150,1,1)
+
+
         self.sm = ScreenManager(transition=SlideTransition())
         self.sm.add_widget(MarketScreen(name='market'))
         self.sm.add_widget(MenuScreen(name='menu'))
@@ -374,6 +387,13 @@ class InterstellarTransportCoApp(App):
         self.player_stats['cargo_used'] = 0
         for each in self.player_commodities:
             self.player_stats['cargo_used'] += self.player_commodities[each]['count']
+
+    def advance_time(self, ticks):
+        self.game_clock += datetime.timedelta(seconds=ticks)
+
+        app.sm.children[0].ids.earth_standard_date.text = 'Earth Date: ' + str(self.game_clock.date())
+        app.sm.children[0].ids.earth_standard_time.text = 'Earth Time: ' + str(self.game_clock.time())
+
 
 if __name__ == '__main__':
     app = InterstellarTransportCoApp()
