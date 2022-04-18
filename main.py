@@ -335,6 +335,7 @@ class PlayerStatButton(NewButton):
             new_text = '>'
         anim = Animation(x=anim_x,y=0, t='in_out_quart',d=0.5)
         anim.start(app.sm.children[0].children[0].children[1].children[0])
+        print(app.sm.children[0].children[0].children[1].children[0].canvas)
         self.text = new_text
 
     def update(self,new_value):
