@@ -89,6 +89,35 @@ class Planet():
                                             self.__day, #DAY
                                             )
 
+
+        self.temp_orbit = random.choices( # x000
+                                [0,1,2,3,4,5,6,7,8,9],
+                                weights=[2044,256,128,64,32,16,8,4,2,1],
+                                k=1
+                                ) + random.choices( # 0x00
+                                [0,1,2,3,4,5,6,7,8,9],
+                                weights=[1,1,1,5,1,1,1,1,1,1],
+                                k=1
+                                ) + random.choices( # 00x0
+                                [0,1,2,3,4,5,6,7,8,9],
+                                weights=[1,1,1,1,1,1,5,1,1,1],
+                                k=1
+                                ) + random.choices( # 000x
+                                [0,1,2,3,4,5,6,7,8,9],
+                                weights=[1,1,1,1,1,5,1,1,1,1],
+                                k=1
+                                )
+
+        self.orbit_in_days = int(str(self.temp_orbit[0]) + str(self.temp_orbit[1]) + str(self.temp_orbit[2]) + str(self.temp_orbit[3]))
+
+        print(self.orbit_in_days)
+
+        self.rotation_in_hours = 0
+
+        self.phase_in_days = 0
+
+
+
         self.__currently_populating = True
         self.__pop_pass = 0
         self.__pop_adjust = 0
