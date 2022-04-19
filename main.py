@@ -64,6 +64,31 @@ planet_possible_goods = [
 
 class Planet():
     def __init__(self,planet_possible_goods):
+        self.id = app.planet_count
+        app.planet_count += 1
+
+        self.__year = random.randint(2030,2149)
+
+        self.__month = random.randint(1,12)
+
+        # Randomly select a day within the parameters of the month.
+        if self.__month == 2:
+            # Leap years get the leap day as a possibility
+            if ((self.__year%400==0) or (self.__year%100!=0) and (self.__year%4==0)):
+                self.__day = random.randint(1,29)
+            else:
+                self.__day = random.randint(1,28)
+        elif self.__month == 4 or self.__month == 6 or self.__month == 9 or self.__month == 11:
+            self.__day = random.randint(1,30)
+        else:
+            self.__day = random.randint(1,31)
+
+        self.founding_est_date = datetime.datetime(
+                                            self.__year, #YEAR
+                                            self.__month, #MONTH
+                                            self.__day, #DAY
+                                            )
+
         self.__currently_populating = True
         self.__pop_pass = 0
         self.__pop_adjust = 0
@@ -166,17 +191,26 @@ class MarketScreen(Screen):
     def __init__(self,**kwargs):
         super(MarketScreen,self).__init__(**kwargs)
 
-        # Create the list of planets.
-        app.planets = []
-
         # Populate the list of planets.
         for i in range(80000):
             self.__temp_len = len(planet_possible_goods) - 1
             self.__selec = random.randint(0,self.__temp_len)
             app.planets.append(Planet(planet_possible_goods[self.__selec]))
 
-    def add_buttons(self, commodities_list):
-        children_count = len(commodities_list)
+    def add_buttons(self, planet):
+        app.local_clock = planet.founding_est_date
+
+        # Find difference between EST and planet founding.
+        self.__temp_date_diff = app.earth_clock - app.local_clock
+
+        # Add the difference above to a calender starting at 0.
+        app.local_clock = datetime.datetime(1,1,1) + datetime.timedelta(self.__temp_date_diff.days)
+
+        # Update the Local Planet Time.
+        app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
+
+
+        children_count = len(planet.market_goods)
         current_size_x = self.ids.commodity_list.size[0]
 
         # Update the list size to fill each market button.
@@ -194,7 +228,7 @@ class MarketScreen(Screen):
 
         self.ids.commodity_list.add_widget(temp_box_layout)
 
-        for each in commodities_list:
+        for each in planet.market_goods:
             price = each['market'] * each['labor_value']
 
             temp_box_layout = BoxLayout(orientation='horizontal',spacing=20)
@@ -290,10 +324,14 @@ class NewButton(Button):
         self.player_cargo_panel_resize(commodity)
 
         # Calculate how long the transaction took.
-        self.__transaction_time = 0
+        if amount > 0:
+            self.__transaction_time = 60 + ((600 * amount) / app.player_stats['buying_skill'])
+        elif amount < 0:
+            self.__transaction_time = 60 + ((600 * abs(amount)) / app.player_stats['selling_skill'])
+
 
         # Update the clock by the time taken to make the transaction.
-        app.advance_time(abs(self.__transaction_time))
+        app.advance_time(round(self.__transaction_time))
 
 
 class MarketButton(NewButton):
@@ -352,12 +390,14 @@ class PlayerStatButton(NewButton):
 class InterstellarTransportCoApp(App):
     def build(self):
         app.planets = []
+        app.planet_count = 0
 
         self.player_stats = {
             'credits':100000,
             'cargo_capacity':1000,
             'cargo_used':0,
-
+            'buying_skill':20,
+            'selling_skill':1
         }
 
         self.player_commodities = {
@@ -373,7 +413,8 @@ class InterstellarTransportCoApp(App):
         }
 
         # The game_clock represents Earth Standard Time
-        self.game_clock = datetime.datetime(2150,1,1)
+        self.earth_clock = datetime.datetime(2150,1,1)
+        self.local_clock = datetime.datetime(2150,1,1)
 
 
         self.sm = ScreenManager(transition=SlideTransition())
@@ -389,10 +430,14 @@ class InterstellarTransportCoApp(App):
             self.player_stats['cargo_used'] += self.player_commodities[each]['count']
 
     def advance_time(self, ticks):
-        self.game_clock += datetime.timedelta(seconds=ticks)
+        self.earth_clock += datetime.timedelta(seconds=ticks)
 
-        app.sm.children[0].ids.earth_standard_date.text = 'Earth Date: ' + str(self.game_clock.date())
-        app.sm.children[0].ids.earth_standard_time.text = 'Earth Time: ' + str(self.game_clock.time())
+        app.sm.children[0].ids.earth_standard_time.text = 'Earth Standard Time: ' + str(self.earth_clock)
+
+
+        self.local_clock += datetime.timedelta(seconds=ticks)
+
+        app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
 
 
 if __name__ == '__main__':
