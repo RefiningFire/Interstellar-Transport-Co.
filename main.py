@@ -89,6 +89,37 @@ class Planet():
                                             self.__day, #DAY
                                             )
 
+        self.temp_rotation = random.choices( # x00
+                                    [0,1,2,3,4,5,6,7,8,9],
+                                    weights=[256,16,8,7,6,5,4,3,2,1],
+                                    k=1
+                                    ) + random.choices( # 0x0
+                                    [0,1,2,3,4,5,6,7,8,9],
+                                    weights=[6,8,20,5,4,3,2,1,1,1],
+                                    k=1
+                                    ) + random.choices( # 00x
+                                    [1,2,3,4,5,6,7,8,9],
+                                    weights=[1,1,1,1,1,1,1,1,1],
+                                    k=1
+                                    )
+
+        self.rotation_in_hours = int(str(self.temp_rotation[0]) + str(self.temp_rotation[1]) + str(self.temp_rotation[2]))
+
+        self.temp_phase = random.choices( # x00
+                                    [0,1,2,3,4,5,6,7,8,9],
+                                    weights=[256,16,8,7,6,5,4,3,2,1],
+                                    k=1
+                                    ) + random.choices( # 0x0
+                                    [0,1,2,3,4,5,6,7,8,9],
+                                    weights=[4,6,8,20,6,4,3,2,1,1],
+                                    k=1
+                                    ) + random.choices( # 00x
+                                    [1,2,3,4,5,6,7,8,9],
+                                    weights=[1,1,1,1,1,1,1,1,1],
+                                    k=1
+                                    )
+
+        self.phase_in_days = int(str(self.temp_phase[0]) + str(self.temp_phase[1]) + str(self.temp_phase[2]))
 
         self.temp_orbit = random.choices( # x000
                                 [0,1,2,3,4,5,6,7,8,9],
@@ -103,45 +134,60 @@ class Planet():
                                 weights=[1,1,2,3,4,5,5,5,4,3],
                                 k=1
                                 ) + random.choices( # 000x
-                                [0,1,2,3,4,5,6,7,8,9],
-                                weights=[1,1,1,1,1,1,1,1,1,1],
+                                [1,2,3,4,5,6,7,8,9],
+                                weights=[1,1,1,1,1,1,1,1,1],
                                 k=1
                                 )
 
-        self.orbit_in_days = int(str(self.temp_orbit[0]) + str(self.temp_orbit[1]) + str(self.temp_orbit[2]) + str(self.temp_orbit[3]))
+        self.orbit_in_days = int(str(self.temp_orbit[0]) +         str(self.temp_orbit[1]) + str(self.temp_orbit[2]) + str(self.temp_orbit[3]))
 
-        self.temp_rotation = random.choices( # x00
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[256,16,8,7,6,5,4,3,2,1],
-                                    k=1
-                                    ) + random.choices( # 0x0
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[6,8,20,5,4,3,2,1,1,1],
-                                    k=1
-                                    ) + random.choices( # 00x
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[1,1,1,1,1,1,1,1,1,1],
-                                    k=1
-                                    )
+        print(f'Solar Year: {self.orbit_in_days}')
+        print(f'Lunar Month: {self.phase_in_days}')
 
-        self.rotation_in_hours = int(str(self.temp_rotation[0]) + str(self.temp_rotation[1]) + str(self.temp_rotation[2]))
+        self.number_of_lunar_cycles = self.orbit_in_days // self.phase_in_days
 
+        self.lunisolar_leftovers = self.orbit_in_days % self.phase_in_days
 
-        self.temp_phase = random.choices( # x00
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[256,16,8,7,6,5,4,3,2,1],
-                                    k=1
-                                    ) + random.choices( # 0x0
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[4,6,8,20,6,4,3,2,1,1],
-                                    k=1
-                                    ) + random.choices( # 00x
-                                    [0,1,2,3,4,5,6,7,8,9],
-                                    weights=[1,1,1,1,1,1,1,1,1,1],
-                                    k=1
-                                    )
+        print(f'Number of Months: {self.number_of_lunar_cycles}')
+        print(f'lunisolar_leftovers: {self.lunisolar_leftovers}')
+        print()
 
-        self.phase_in_days = int(str(self.temp_phase[0]) + str(self.temp_phase[1]) + str(self.temp_phase[2]))
+        self.months = []
+        self.__temp_month_names = [
+            ['Uniber','Unibris','Monos'],
+            ['Duber','Dubris','Dyios'],
+            ['Triber','Tribris','Trios'],
+            ['Quadriber','Quadribris','Tetraios'],
+            ['Quinqueber','Quinquebris','Pentaios'],
+            ['Sexaber','Sexabris','Hexaios'],
+            ['September','Septembris','Heptaios'],
+            ['October','Octobris','Octos'],
+            ['November','Novembris','Enneaios'],
+            ['December','Decembris','Decaios'],
+            ['Undecber','Undecbris','Hendecaios'],
+            ['Duodecber','Duodecbris','Dodecaios'],
+            ['Tredecber','Tredecbris','Triadecaios'],
+            ['Quattuordecber','Quattuordecbris','Tessaradecaios'],
+            ['Quinquadecber','Quinquadecbris','Pentedecaios'],
+            ['Sedecber','Sedecbris','Hexadecaios'],
+            ['Septendecber','Septendecbris','Heptadecaios'],
+            ['Octodecber','Octodecbris','Octodecaios'],
+            ['Novemdecber','Novemdecbris','Enneadecaios'],
+            ['Vigintiber','Vigintibris','Eicosios'],
+
+            ]
+
+        for month in range(self.number_of_lunar_cycles):
+
+            self.months.append(
+                {
+                'name':self.__temp_month_names[month][random.randint(0,len(self.__temp_month_names[month])-1)],
+                'days':self.phase_in_days
+                }
+
+            )
+
+        print(self.months)
 
 
         self.__currently_populating = True
@@ -253,13 +299,7 @@ class MarketScreen(Screen):
             app.planets.append(Planet(planet_possible_goods[self.__selec]))
 
     def add_buttons(self, planet):
-        app.local_clock = planet.founding_est_date
-
-        # Find difference between EST and planet founding.
-        self.__temp_date_diff = app.earth_clock - app.local_clock
-
-        # Add the difference above to a calender starting at 0.
-        app.local_clock = datetime.datetime(1,1,1) + datetime.timedelta(self.__temp_date_diff.days)
+        app.local_clock = '1234-01-01 00:00:00'
 
         # Update the Local Planet Time.
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
@@ -469,7 +509,7 @@ class InterstellarTransportCoApp(App):
 
         # The game_clock represents Earth Standard Time
         self.earth_clock = datetime.datetime(2150,1,1)
-        self.local_clock = datetime.datetime(2150,1,1)
+        self.local_clock = '0000-01-01 00:00:00'
 
 
         self.sm = ScreenManager(transition=SlideTransition())
@@ -489,10 +529,73 @@ class InterstellarTransportCoApp(App):
 
         app.sm.children[0].ids.earth_standard_time.text = 'Earth Standard Time: ' + str(self.earth_clock)
 
+        self.local_clock = self.local_time_advance(ticks)
 
-        self.local_clock += datetime.timedelta(seconds=ticks)
+        #self.local_clock += datetime.timedelta(seconds=ticks)
 
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
+
+    def local_time_advance(self,ticks):
+        self.__ticks = ticks
+        self.__temp_year = ''
+        self.__temp_month = ''
+        self.__temp_day = ''
+        self.__temp_hour = ''
+        self.__temp_minutes = ''
+        self.__temp_seconds = ''
+        self.__temp_date_counter = 0
+
+        for each in self.local_clock:
+            if each == '-' or each == ':' or each == ' ':
+                self.__temp_date_counter += 1
+            elif self.__temp_date_counter == 0:
+                self.__temp_year += each
+            elif self.__temp_date_counter == 1:
+                self.__temp_month += each
+            elif self.__temp_date_counter == 2:
+                self.__temp_day += each
+            elif self.__temp_date_counter == 3:
+                self.__temp_hour += each
+            elif self.__temp_date_counter == 4:
+                self.__temp_minutes += each
+            elif self.__temp_date_counter > 4:
+                self.__temp_seconds += each
+
+        # Add to minutes and take from ticks until under 60
+        while self.__ticks >= 60:
+            self.__temp_minutes = str(int(self.__temp_minutes) + 1)
+            self.__ticks -= 60
+
+        # Add remaining ticks to the seconds counter.
+        self.__temp_seconds = str(int(self.__temp_seconds) + self.__ticks)
+
+        # Add minutes over 60 to hours.
+        while int(self.__temp_minutes) >= 60:
+            self.__temp_hour = str(int(self.__temp_hour) + 1)
+            self.__temp_minutes = str(int(self.__temp_minutes) - 60)
+
+        # Add hours over the planetary rotation to the days.
+        while int(self.__temp_hour) >= app.planets[0].rotation_in_hours:
+            self.__temp_day = str(int(self.__temp_day) + 1)
+            self.__temp_hour = str(int(self.__temp_hour) - app.planets[0].rotation_in_hours)
+
+        # Add days over the phase length to the month.
+        while int(self.__temp_day) >= app.planets[0].phase_in_days:
+            self.__temp_month = str(int(self.__temp_month) + 1)
+            self.__temp_day = str(int(self.__temp_day) - app.planets[0].phase_in_days)
+
+        # Add months over the orbit length to the year.
+        while int(self.__temp_day) >= app.planets[0].orbit_in_days:
+            self.__temp_year = str(int(self.__temp_year) + 1)
+            self.__temp_day = str(int(self.__temp_day) - app.planets[0].orbit_in_days)
+
+
+
+
+
+        self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
+
+        return self.__temp_value
 
 
 if __name__ == '__main__':
