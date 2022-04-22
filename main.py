@@ -16,6 +16,8 @@ from kivy.animation import Animation
 
 from kivy.core.window import Window
 
+import month_names
+
 import random
 import re
 import datetime
@@ -153,32 +155,11 @@ class Planet():
         print()
 
         self.months = []
-        self.__temp_month_names = [
-            ['Uniber','Unibris','Monos'],
-            ['Duber','Dubris','Dyios'],
-            ['Triber','Tribris','Trios'],
-            ['Quadriber','Quadribris','Tetraios'],
-            ['Quinqueber','Quinquebris','Pentaios'],
-            ['Sexaber','Sexabris','Hexaios'],
-            ['September','Septembris','Heptaios'],
-            ['October','Octobris','Octos'],
-            ['November','Novembris','Enneaios'],
-            ['December','Decembris','Decaios'],
-            ['Undecber','Undecbris','Hendecaios'],
-            ['Duodecber','Duodecbris','Dodecaios'],
-            ['Tredecber','Tredecbris','Triadecaios'],
-            ['Quattuordecber','Quattuordecbris','Tessaradecaios'],
-            ['Quinquadecber','Quinquadecbris','Pentedecaios'],
-            ['Sedecber','Sedecbris','Hexadecaios'],
-            ['Septendecber','Septendecbris','Heptadecaios'],
-            ['Octodecber','Octodecbris','Octodecaios'],
-            ['Novemdecber','Novemdecbris','Enneadecaios'],
-            ['Vigintiber','Vigintibris','Eicosios'],
+        self.__temp_month_names = month_names.list
 
-            ]
+
 
         for month in range(self.number_of_lunar_cycles):
-
             self.months.append(
                 {
                 'name':self.__temp_month_names[month][random.randint(0,len(self.__temp_month_names[month])-1)],
