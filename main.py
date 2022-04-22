@@ -143,33 +143,49 @@ class Planet():
 
         self.orbit_in_days = int(str(self.temp_orbit[0]) +         str(self.temp_orbit[1]) + str(self.temp_orbit[2]) + str(self.temp_orbit[3]))
 
-        print(f'Solar Year: {self.orbit_in_days}')
-        print(f'Lunar Month: {self.phase_in_days}')
 
-        self.number_of_lunar_cycles = self.orbit_in_days // self.phase_in_days
+        self.__number_of_months = self.orbit_in_days // self.phase_in_days
+        self.__lunisolar_leftovers = self.orbit_in_days % self.phase_in_days
+        self.__each_month_add = 0
 
-        self.lunisolar_leftovers = self.orbit_in_days % self.phase_in_days
+        if self.__number_of_months == 0:
+            print('0 months')
+        else:
+            # Calculate how many days added to each month
+            while self.__lunisolar_leftovers >= self.__number_of_months:
+                self.__each_month_add += 1
+                self.__lunisolar_leftovers -= self.__number_of_months
 
-        print(f'Number of Months: {self.number_of_lunar_cycles}')
-        print(f'lunisolar_leftovers: {self.lunisolar_leftovers}')
-        print()
+            # If there are leftovers, figure out how they should be spaced.
+            if self.__lunisolar_leftovers > 0:
+                self.__month_spacing = round(self.__number_of_months /     self.__lunisolar_leftovers)
+
 
         self.months = []
         self.__temp_month_names = month_names.list
+        self.__specific_month_add = 0
+
+        for month in range(self.__number_of_months):
+            # if month is one of the properly spaced months, add a day to it and remove a leftover day from the list.
+            if self.__lunisolar_leftovers > 0 and (month + 1) % self.__month_spacing == 0:
+                self.__lunisolar_leftovers -= 1
+                self.__specific_month_add = 1
+            else:
+                self.__specific_month_add = 0
+
+            # Put any remaining leftover days in the last month of the year.
+            if (month + 1) == self.__number_of_months and self.__lunisolar_leftovers > 0:
+                self.__specific_month_add += self.__lunisolar_leftovers
 
 
 
-        for month in range(self.number_of_lunar_cycles):
             self.months.append(
                 {
                 'name':self.__temp_month_names[month][random.randint(0,len(self.__temp_month_names[month])-1)],
-                'days':self.phase_in_days
+                'days':(self.phase_in_days + self.__each_month_add + self.__specific_month_add)
                 }
 
             )
-
-        print(self.months)
-
 
         self.__currently_populating = True
         self.__pop_pass = 0
