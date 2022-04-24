@@ -297,9 +297,13 @@ class MarketScreen(Screen):
 
     def add_buttons(self, planet):
         app.local_clock = '1234-01-01 00:00:00'
+        app.local_TOD = 'Midnight'
 
         # Update the Local Planet Time.
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
+
+        # Update the local Time of Day
+        app.sm.children[0].ids.local_time_of_day.text = str(app.local_TOD)
 
 
         children_count = len(planet.market_goods)
@@ -507,6 +511,7 @@ class InterstellarTransportCoApp(App):
         # The game_clock represents Earth Standard Time
         self.earth_clock = datetime.datetime(2150,1,1)
         self.local_clock = '0000-01-01 00:00:00'
+        self.local_TOD = 'Testing'
 
 
         self.sm = ScreenManager(transition=SlideTransition())
@@ -531,6 +536,8 @@ class InterstellarTransportCoApp(App):
         #self.local_clock += datetime.timedelta(seconds=ticks)
 
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
+
+        app.sm.children[0].ids.local_time_of_day.text = str(self.local_TOD)
 
     def local_time_advance(self,ticks):
         self.__ticks = ticks
@@ -587,12 +594,43 @@ class InterstellarTransportCoApp(App):
             self.__temp_day = str(int(self.__temp_day) - app.planets[0].orbit_in_days)
 
 
-
-
-
         self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
 
+        self.local_TOD_calculate(self.__temp_hour)
+
         return self.__temp_value
+
+    def local_TOD_calculate(self,temp_hour):
+        # Convert the planet time to earth ratio.
+        self.__temp_local_TOD = 24 * (int(temp_hour) / app.planets[0].rotation_in_hours)
+
+        if self.__temp_local_TOD >= 0 and self.__temp_local_TOD < 2:
+            self.local_TOD = 'Midnight' # 12:00 a.m. - 2:00 a.m.
+        elif self.__temp_local_TOD >= 2 and self.__temp_local_TOD < 4:
+            self.local_TOD = 'Late Night'# 2:00 a.m. - 4:00 a.m.
+        elif self.__temp_local_TOD >= 4 and self.__temp_local_TOD < 6:
+            self.local_TOD = 'Early Morning' # 4:00 - 6:00 a.m.
+        elif self.__temp_local_TOD >= 6 and self.__temp_local_TOD < 8:
+            self.local_TOD = 'Mid Morning' # 6:00 a.m. - 8:00 a.m.
+        elif self.__temp_local_TOD >= 8 and self.__temp_local_TOD < 10:
+            self.local_TOD = 'Late Morning' # 8:00 a.m. - 10:00 a.m.
+        elif self.__temp_local_TOD >= 10 and self.__temp_local_TOD < 12:
+            self.local_TOD = 'Before Noon' # 10:00 a.m. - 12:00 p.m.
+        elif self.__temp_local_TOD >= 12 and self.__temp_local_TOD < 14:
+            self.local_TOD = 'Mid Afternoon' # 12:00 p.m. - 2:00 p.m.
+        elif self.__temp_local_TOD >= 14 and self.__temp_local_TOD < 16:
+            self.local_TOD = 'Late Afternoon' # 2:00 p.m. - 4:00 p.m.
+        elif self.__temp_local_TOD >= 16 and self.__temp_local_TOD < 18:
+            self.local_TOD = 'Early Evening' # 4:00 p.m. - 6:00 p.m.
+        elif self.__temp_local_TOD >= 18 and self.__temp_local_TOD < 20:
+            self.local_TOD = 'Mid Evening' # 6:00 p.m. - 8:00 p.m.
+        elif self.__temp_local_TOD >= 20 and self.__temp_local_TOD < 22:
+            self.local_TOD = 'Late Evening' # 8:00 p.m. - 10:00 p.m.
+        elif self.__temp_local_TOD >= 21 and self.__temp_local_TOD < 24:
+            self.local_TOD = 'Early Night' # 10:00 p.m. - 12:00 p.m.
+
+        print(self.local_TOD)
+        print(self.__temp_value)
 
 
 if __name__ == '__main__':
