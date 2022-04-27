@@ -144,28 +144,28 @@ class Planet():
         self.orbit_in_days = int(str(self.temp_orbit[0]) +         str(self.temp_orbit[1]) + str(self.temp_orbit[2]) + str(self.temp_orbit[3]))
 
 
-        self.__number_of_months = self.orbit_in_days // self.phase_in_days
+        self.number_of_months = self.orbit_in_days // self.phase_in_days
         self.__lunisolar_leftovers = self.orbit_in_days % self.phase_in_days
         self.__each_month_add = 0
 
-        if self.__number_of_months == 0:
+        if self.number_of_months == 0:
             print('0 months')
         else:
             # Calculate how many days added to each month
-            while self.__lunisolar_leftovers >= self.__number_of_months:
+            while self.__lunisolar_leftovers >= self.number_of_months:
                 self.__each_month_add += 1
-                self.__lunisolar_leftovers -= self.__number_of_months
+                self.__lunisolar_leftovers -= self.number_of_months
 
             # If there are leftovers, figure out how they should be spaced.
             if self.__lunisolar_leftovers > 0:
-                self.__month_spacing = round(self.__number_of_months /     self.__lunisolar_leftovers)
+                self.__month_spacing = round(self.number_of_months /     self.__lunisolar_leftovers)
 
 
         self.months = []
         self.__temp_month_names = month_names.list
         self.__specific_month_add = 0
 
-        for month in range(self.__number_of_months):
+        for month in range(self.number_of_months):
             # if month is one of the properly spaced months, add a day to it and remove a leftover day from the list.
             if self.__lunisolar_leftovers > 0 and (month + 1) % self.__month_spacing == 0:
                 self.__lunisolar_leftovers -= 1
@@ -174,7 +174,7 @@ class Planet():
                 self.__specific_month_add = 0
 
             # Put any remaining leftover days in the last month of the year.
-            if (month + 1) == self.__number_of_months and self.__lunisolar_leftovers > 0:
+            if (month + 1) == self.number_of_months and self.__lunisolar_leftovers > 0:
                 self.__specific_month_add += self.__lunisolar_leftovers
 
 
@@ -296,14 +296,12 @@ class MarketScreen(Screen):
             app.planets.append(Planet(planet_possible_goods[self.__selec]))
 
     def add_buttons(self, planet):
-        app.local_clock = '1234-01-01 00:00:00'
-        app.local_TOD = 'Midnight'
 
         # Update the Local Planet Time.
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
 
-        # Update the local Time of Day
-        app.sm.children[0].ids.local_time_of_day.text = str(app.local_TOD)
+        # Update the local Season and Time of Day
+        app.sm.children[0].ids.local_time_of_day.text = str(app.local_season) + ',      ' + str(app.local_TOD)
 
 
         children_count = len(planet.market_goods)
@@ -511,6 +509,7 @@ class InterstellarTransportCoApp(App):
         # The game_clock represents Earth Standard Time
         self.earth_clock = datetime.datetime(2150,1,1)
         self.local_clock = '0000-01-01 00:00:00'
+        self.local_season = 'Testing'
         self.local_TOD = 'Testing'
 
 
@@ -537,7 +536,7 @@ class InterstellarTransportCoApp(App):
 
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
 
-        app.sm.children[0].ids.local_time_of_day.text = str(self.local_TOD)
+        app.sm.children[0].ids.local_time_of_day.text = str(self.local_season) + ', ' + str(self.local_TOD)
 
     def local_time_advance(self,ticks):
         self.__ticks = ticks
@@ -573,6 +572,10 @@ class InterstellarTransportCoApp(App):
         # Add remaining ticks to the seconds counter.
         self.__temp_seconds = str(int(self.__temp_seconds) + self.__ticks)
 
+        while int(self.__temp_seconds) >= 60:
+            self.__temp_minutes = str(int(self.__temp_minutes) + 1)
+            self.__temp_seconds = str(int(self.__temp_seconds) - 60)
+
         # Add minutes over 60 to hours.
         while int(self.__temp_minutes) >= 60:
             self.__temp_hour = str(int(self.__temp_hour) + 1)
@@ -597,6 +600,7 @@ class InterstellarTransportCoApp(App):
         self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
 
         self.local_TOD_calculate(self.__temp_hour)
+        self.local_season_calculate(self.__temp_month, self.__temp_day)
 
         return self.__temp_value
 
@@ -629,8 +633,35 @@ class InterstellarTransportCoApp(App):
         elif self.__temp_local_TOD >= 21 and self.__temp_local_TOD < 24:
             self.local_TOD = 'Early Night' # 10:00 p.m. - 12:00 p.m.
 
-        print(self.local_TOD)
-        print(self.__temp_value)
+    def local_season_calculate(self,temp_month,temp_day):
+        self.__temp_day_of_year = (int(temp_month) * app.planets[0].phase_in_days) + int(temp_day)
+
+        self.__temp_season = 365 * (self.__temp_day_of_year / app.planets[0].orbit_in_days)
+
+        if self.__temp_season >= 355 or self.__temp_season < 21:
+            self.local_season = 'Early Winter' # January
+        elif self.__temp_season >= 21 and self.__temp_season < 49:
+            self.local_season = 'Mid Winter' # February
+        elif self.__temp_season >= 49 and self.__temp_season < 79:
+            self.local_season = 'Late Winter' # March
+        elif self.__temp_season >= 79 and self.__temp_season < 110:
+            self.local_season = 'Early Spring' # April
+        elif self.__temp_season >= 110 and self.__temp_season < 141:
+            self.local_season = 'Mid Spring' # May
+        elif self.__temp_season >= 141 and self.__temp_season < 172:
+            self.local_season = 'Late Spring' # June
+        elif self.__temp_season >= 172 and self.__temp_season < 203:
+            self.local_season = 'Early Summer' # July
+        elif self.__temp_season >= 203 and self.__temp_season < 234:
+            self.local_season = 'Mid Summer' # August
+        elif self.__temp_season >= 234 and self.__temp_season < 265:
+            self.local_season = 'Late Summer' # September
+        elif self.__temp_season >= 265 and self.__temp_season < 295:
+            self.local_season = 'Early Autumn' # October
+        elif self.__temp_season >= 295 and self.__temp_season < 325:
+            self.local_season = 'Mid Autumn' # November
+        elif self.__temp_season >= 325 and self.__temp_season < 355:
+            self.local_season = 'Late Autumn' # December
 
 
 if __name__ == '__main__':
