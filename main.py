@@ -85,10 +85,17 @@ class Planet():
         else:
             self.__day = random.randint(1,31)
 
+        self.__hour = random.randint(0,23)
+        self.__minute = random.randint(0,59)
+        self.__second = random.randint(0,59)
+
         self.founding_est_date = datetime.datetime(
                                             self.__year, #YEAR
                                             self.__month, #MONTH
                                             self.__day, #DAY
+                                            self.__hour, #HOUR
+                                            self.__minute, #MINUTE
+                                            self.__second
                                             )
 
         self.temp_rotation = random.choices( # x00
@@ -297,8 +304,14 @@ class MarketScreen(Screen):
 
     def add_buttons(self, planet):
 
+        # Add time since planet founding_est_date to local clock.
+        print(app.planets[0].founding_est_date)
+
         # Update the Local Planet Time.
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
+
+        # Update the number of months in a year, days in a month.
+        app.sm.children[0].ids.local_planet_range.text = 'Local Planet - Months: ' + str(planet.number_of_months) + '  Days: ' + str(planet.phase_in_days) + '  Hours: ' + str(planet.rotation_in_hours)
 
         # Update the local Season and Time of Day
         app.sm.children[0].ids.local_time_of_day.text = str(app.local_season) + ',      ' + str(app.local_TOD)
@@ -490,8 +503,8 @@ class InterstellarTransportCoApp(App):
             'credits':100000,
             'cargo_capacity':1000,
             'cargo_used':0,
-            'buying_skill':20,
-            'selling_skill':1
+            'buying_skill':.1,
+            'selling_skill':.1
         }
 
         self.player_commodities = {
@@ -508,6 +521,8 @@ class InterstellarTransportCoApp(App):
 
         # The game_clock represents Earth Standard Time
         self.earth_clock = datetime.datetime(2150,1,1)
+
+        # The local clock represents the time on the local planet.
         self.local_clock = '0000-01-01 00:00:00'
         self.local_season = 'Testing'
         self.local_TOD = 'Testing'
@@ -531,8 +546,6 @@ class InterstellarTransportCoApp(App):
         app.sm.children[0].ids.earth_standard_time.text = 'Earth Standard Time: ' + str(self.earth_clock)
 
         self.local_clock = self.local_time_advance(ticks)
-
-        #self.local_clock += datetime.timedelta(seconds=ticks)
 
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
 
@@ -595,6 +608,28 @@ class InterstellarTransportCoApp(App):
         while int(self.__temp_day) >= app.planets[0].orbit_in_days:
             self.__temp_year = str(int(self.__temp_year) + 1)
             self.__temp_day = str(int(self.__temp_day) - app.planets[0].orbit_in_days)
+
+        # If any of the times are less than full digits fill them out.
+        if int(self.__temp_seconds) >= 0 and int(self.__temp_seconds) <= 9 and len(self.__temp_seconds) <= 1:
+            self.__temp_seconds = '0' + self.__temp_seconds
+        if int(self.__temp_minutes) >= 0 and int(self.__temp_minutes) <= 9 and len(self.__temp_minutes) <= 1:
+            self.__temp_minutes = '0' + self.__temp_minutes
+        if int(self.__temp_hour) >= 0 and int(self.__temp_hour) <= 9 and len(self.__temp_hour) <= 1:
+            self.__temp_hour = '0' + self.__temp_hour
+        if int(self.__temp_day) >= 0 and int(self.__temp_day) <= 9 and len(self.__temp_day) <= 1:
+            self.__temp_day = '0' + self.__temp_day
+        if int(self.__temp_month) >= 0 and int(self.__temp_month) <= 9 and len(self.__temp_month) <= 1:
+            self.__temp_month = '0' + self.__temp_month
+
+        if int(self.__temp_year) >= 0 and int(self.__temp_year) <= 9 and len(self.__temp_year) <= 3:
+            self.__temp_year = '000' + self.__temp_year
+        elif int(self.__temp_year) >= 10 and int(self.__temp_year) <= 99 and len(self.__temp_year) <= 3:
+            self.__temp_year = '00' + self.__temp_year
+        elif int(self.__temp_year) >= 100 and int(self.__temp_year) <= 999 and len(self.__temp_year) <= 3:
+            self.__temp_year = '0' + self.__temp_year
+
+
+
 
 
         self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
