@@ -305,7 +305,13 @@ class MarketScreen(Screen):
     def add_buttons(self, planet):
 
         # Add time since planet founding_est_date to local clock.
-        print(app.planets[0].founding_est_date)
+        self.__EST_local_diff = app.earth_clock - app.planets[0].founding_est_date
+
+        self.__ticks = int(self.__EST_local_diff.total_seconds())
+
+        app.local_clock = app.local_time_advance(self.__ticks,True)
+
+
 
         # Update the Local Planet Time.
         app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(app.local_clock)
@@ -545,13 +551,13 @@ class InterstellarTransportCoApp(App):
 
         app.sm.children[0].ids.earth_standard_time.text = 'Earth Standard Time: ' + str(self.earth_clock)
 
-        self.local_clock = self.local_time_advance(ticks)
+        self.local_clock = self.local_time_advance(ticks,False)
 
-        app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + str(self.local_clock)
+        app.sm.children[0].ids.local_planet_time.text = 'Local Planet Time: ' + self.local_clock
 
         app.sm.children[0].ids.local_time_of_day.text = str(self.local_season) + ', ' + str(self.local_TOD)
 
-    def local_time_advance(self,ticks):
+    def local_time_advance(self,ticks,initial_calc):
         self.__ticks = ticks
         self.__temp_year = ''
         self.__temp_month = ''
@@ -577,37 +583,60 @@ class InterstellarTransportCoApp(App):
             elif self.__temp_date_counter > 4:
                 self.__temp_seconds += each
 
-        # Add to minutes and take from ticks until under 60
-        while self.__ticks >= 60:
-            self.__temp_minutes = str(int(self.__temp_minutes) + 1)
-            self.__ticks -= 60
 
-        # Add remaining ticks to the seconds counter.
-        self.__temp_seconds = str(int(self.__temp_seconds) + self.__ticks)
+        self.__ticks_in_day = 3600 * app.planets[0].rotation_in_hours
 
+        # The number of years, in a whole number.
+        self.__temp_year = str(int(self.__temp_year) + self.__ticks // (self.__ticks_in_day * app.planets[0].orbit_in_days))
+        # The number of ticks leftover from the year calc.
+        self.__leftover_ticks = self.__ticks % (self.__ticks_in_day * app.planets[0].orbit_in_days)
+
+
+        if app.planets[0].number_of_months > 0:
+            # The number of months, returned as a whole number.
+            self.__temp_month = str(int(self.__temp_month) + self.__leftover_ticks // (self.__ticks_in_day * app.planets[0].phase_in_days))
+            # The number of ticks leftover from the month calc.
+            self.__leftover_ticks = self.__leftover_ticks % (self.__ticks_in_day * app.planets[0].phase_in_days)
+        else:
+            print('again with the 0 months')
+
+        # The number of days, returned as a whole number.
+        self.__temp_day = str(int(self.__temp_day) + self.__leftover_ticks // (self.__ticks_in_day))
+        # The number of ticks leftover from the day calc
+        self.__leftover_ticks = self.__leftover_ticks % (self.__ticks_in_day)
+
+        # The number of hours, returned as a whole number.
+        self.__temp_hour = str(int(self.__temp_hour) + self.__leftover_ticks // 3600)
+        # The number of ticks leftover from the hour calc.
+        self.__leftover_ticks = self.__leftover_ticks % 3600
+
+        # The total number of minutes, rounded to a whole minute.
+        self.__temp_minutes = str(int(self.__temp_minutes) + self.__leftover_ticks // 60)
+        # The number of seconds, which is the leftover ticks remaining.
+        self.__temp_seconds = str(int(self.__temp_seconds) + self.__leftover_ticks % 60)
+
+
+        # Check if more seconds than allowed in a minute.
         while int(self.__temp_seconds) >= 60:
             self.__temp_minutes = str(int(self.__temp_minutes) + 1)
             self.__temp_seconds = str(int(self.__temp_seconds) - 60)
-
-        # Add minutes over 60 to hours.
+        # Check if more minutes than allowed in an hour.
         while int(self.__temp_minutes) >= 60:
             self.__temp_hour = str(int(self.__temp_hour) + 1)
             self.__temp_minutes = str(int(self.__temp_minutes) - 60)
-
-        # Add hours over the planetary rotation to the days.
+        # Check if more hours than allowed in a day.
         while int(self.__temp_hour) >= app.planets[0].rotation_in_hours:
             self.__temp_day = str(int(self.__temp_day) + 1)
             self.__temp_hour = str(int(self.__temp_hour) - app.planets[0].rotation_in_hours)
-
-        # Add days over the phase length to the month.
-        while int(self.__temp_day) >= app.planets[0].phase_in_days:
+        # Check if more days than allowed in a month.
+        while int(self.__temp_day) > app.planets[0].phase_in_days:
             self.__temp_month = str(int(self.__temp_month) + 1)
             self.__temp_day = str(int(self.__temp_day) - app.planets[0].phase_in_days)
-
-        # Add months over the orbit length to the year.
-        while int(self.__temp_day) >= app.planets[0].orbit_in_days:
+        # Check if more months than allowed in year.
+        while int(self.__temp_month) > app.planets[0].number_of_months:
             self.__temp_year = str(int(self.__temp_year) + 1)
-            self.__temp_day = str(int(self.__temp_day) - app.planets[0].orbit_in_days)
+            self.__temp_month = str(int(self.__temp_month) - app.planets[0].number_of_months)
+
 
         # If any of the times are less than full digits fill them out.
         if int(self.__temp_seconds) >= 0 and int(self.__temp_seconds) <= 9 and len(self.__temp_seconds) <= 1:
@@ -629,13 +658,11 @@ class InterstellarTransportCoApp(App):
             self.__temp_year = '0' + self.__temp_year
 
 
-
-
-
         self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
 
-        self.local_TOD_calculate(self.__temp_hour)
-        self.local_season_calculate(self.__temp_month, self.__temp_day)
+        if initial_calc == False:
+            self.local_TOD_calculate(self.__temp_hour)
+            self.local_season_calculate(self.__temp_month, self.__temp_day)
 
         return self.__temp_value
 
