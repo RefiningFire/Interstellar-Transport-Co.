@@ -320,7 +320,7 @@ class MarketScreen(Screen):
         app.sm.children[0].ids.local_planet_range.text = 'Local Planet - Months: ' + str(planet.number_of_months) + '  Days: ' + str(planet.phase_in_days) + '  Hours: ' + str(planet.rotation_in_hours)
 
         # Update the local Season and Time of Day
-        app.sm.children[0].ids.local_time_of_day.text = str(app.local_season) + ',      ' + str(app.local_TOD)
+        app.sm.children[0].ids.local_time_of_day.text = str(app.local_season) + ', ' + str(app.local_TOD)
 
 
         children_count = len(planet.market_goods)
@@ -660,9 +660,9 @@ class InterstellarTransportCoApp(App):
 
         self.__temp_value = self.__temp_year + '-' + self.__temp_month + '-' + self.__temp_day + ' ' + self.__temp_hour + ':' + self.__temp_minutes + ':' + self.__temp_seconds
 
-        if initial_calc == False:
-            self.local_TOD_calculate(self.__temp_hour)
-            self.local_season_calculate(self.__temp_month, self.__temp_day)
+
+        self.local_TOD_calculate(self.__temp_hour)
+        self.local_season_calculate(self.__temp_month, self.__temp_day)
 
         return self.__temp_value
 
